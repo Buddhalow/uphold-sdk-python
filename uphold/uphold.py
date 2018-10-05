@@ -48,19 +48,24 @@ class Uphold(object):
     Use this SDK to simplify interaction with the Uphold API
     """
     
-    def __init__(self, sandbox=False):
+    def __init__(self, access_token=None, client_id=None, client_secret=None, authorization_uri=None, sandbox=False):
         if sandbox:
             self.host = 'api-sandbox.uphold.com'
         else:
             self.host = 'api.uphold.com'
         self.in_sandbox = sandbox
-        self.debug   = False
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.authorization_uri = authorization_uri
+        self.debug = False
         self.version = 0
         self.session = requests.Session()
         self.headers = {
             'Content-type': 'application/x-www-form-urlencoded',
             'User-Agent': 'uphold-python-sdk/' + __version__
-            }
+        }
+        if access_token:
+            self.headers['Authorization'] = 'Bearer ' + access_token
         self.pat = None
         self.otp = None
 
@@ -70,6 +75,9 @@ class Uphold(object):
         
     def verification_code(self, code):
         self.otp = code
+
+    def auth_access_token(self, access_token):
+        self.access_token = access_token
 
     def auth_basic(self, username, password):
         """
